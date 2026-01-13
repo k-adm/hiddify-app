@@ -8,6 +8,7 @@ import 'package:hiddify/core/router/router.dart';
 import 'package:hiddify/features/common/general_pref_tiles.dart';
 import 'package:hiddify/features/per_app_proxy/model/per_app_proxy_mode.dart';
 import 'package:hiddify/features/settings/notifier/platform_settings_notifier.dart';
+import 'package:hiddify/features/settings/widgets/custom_rules_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AdvancedSettingTiles extends HookConsumerWidget {
@@ -72,6 +73,15 @@ class AdvancedSettingTiles extends HookConsumerWidget {
               await ref.read(resetTunnelProvider.notifier).run();
             },
           ),
+        ListTile(
+          title: const Text("Custom Routing Rules"),
+          leading: const Icon(FluentIcons.road_cone_24_regular),
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const CustomRulesPage()),
+            );
+          },
+        ),
         SwitchListTile(
           title: Text(t.settings.advanced.debugMode),
           value: debug,

@@ -362,6 +362,7 @@ abstract class ConfigOptions {
   };
 
   static final Map<String, StateNotifierProvider<PreferencesNotifier, dynamic>> preferences = {
+    "custom-routing-rules": customRules,
     "region": region,
     "block-ads": blockAds,
     "use-xray-core-when-possible": useXrayCoreWhenPossible,
@@ -418,6 +419,13 @@ abstract class ConfigOptions {
     "warp2.access-token": warp2AccessToken,
     "warp2.wireguard-config": warp2WireguardConfig,
   };
+
+  static final customRules = PreferencesNotifier.create<List<SingboxRule>, String>(
+    "custom-routing-rules",
+    [],
+    mapFrom: const ListSingboxRuleConverter().fromJson,
+    mapTo: const ListSingboxRuleConverter().toJson,
+  );
 
   static final singboxConfigOptions = FutureProvider<SingboxConfigOption>(
     (ref) async {
@@ -545,11 +553,31 @@ abstract class ConfigOptions {
         //       geoAssets.geosite.providerName,
         //       geoAssets.geosite.fileName,
         //     ),
-        rules: rules,
+        rules: [
+          ...ref.watch(customRules),
+          ...rules,
+        ],
       );
     },
   );
 }
+
+class ListSingboxRuleConverter extends JsonConverter<List<SingboxRule>, String> {
+  const ListSingboxRuleConverter();
+
+  @override
+  List<SingboxRule> fromJson(String json) {
+    if (json.isEmpty) return [];
+    return (jsonDecode(json) as List)
+        .map((e) => SingboxRule.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  String toJson(List<SingboxRule> object) {
+    return jsonEncode(object.map((e) => e.toJson()).toList());
+  }
+
 
 class ConfigOptionRepository with ExceptionHandler, InfraLogger {
   ConfigOptionRepository({
