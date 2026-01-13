@@ -577,6 +577,7 @@ class ListSingboxRuleConverter extends JsonConverter<List<SingboxRule>, String> 
   String toJson(List<SingboxRule> object) {
     return jsonEncode(object.map((e) => e.toJson()).toList());
   }
+}
 
 
 class ConfigOptionRepository with ExceptionHandler, InfraLogger {
